@@ -3,6 +3,7 @@ import { useEffect, useState} from 'react';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import { useDebouncedCallback } from 'use-debounce';
 
+
 export default function Search({ placeholder }: { placeholder: string }) {
     const searchParams = useSearchParams();
     const pathname = usePathname();
@@ -21,7 +22,7 @@ export default function Search({ placeholder }: { placeholder: string }) {
     }, 300);
 
     useEffect(()=> {
-        fetch("http://localhost:8080/api/home").then(
+        fetch("http://localhost:8080/player-stats").then(
           response => response.json()
         ).then(
           data=> {

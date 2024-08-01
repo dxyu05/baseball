@@ -20,7 +20,7 @@ def getStats():
     stats = batting_stats_range("2022-01-04", "2024-07-29")
     json_data = stats.to_json(orient='records')
     
-    return json_data,200
+    return json_data, 200
 
 if __name__ == "__main__":
     app.run(debug=True, port = 8080)
