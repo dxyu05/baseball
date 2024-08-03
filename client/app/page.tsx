@@ -1,27 +1,19 @@
 import Search from '@/app/ui/search';
 import { Suspense } from 'react';
  
-export default async function Page(){
-  /*
-  searchParams,
-}: {
-  searchParams?: {
-    query?: string;
-    page?: string;
-  };
-}) {
-
-  const query = searchParams?.query || '';
-  const currentPage = Number(searchParams?.page) || 1;
-  */
+export default function Page() {
   return (
-    <div className="w-full h-screen flex flex-col justify-center items-center">
-      <h1>This site is under construction :)</h1>
-      <div className="mt-5 w-1/2">
-      <Suspense>
-        <Search placeholder="Search players..." />
-      </Suspense>
+    <div className="w-full h-screen flex flex-col justify-center items-center gap-10">
+      <h1>Enter desired player first name and last name separated by space, press enter to search :0</h1>
+      <div className="w-1/2">
+        <Suspense>
+          <Search placeholder="Search players..." />
+        </Suspense>
       </div>
+      <div className = "absolute bottom-10 text-sm">
+        <p>This site is under construction :)</p>
+      </div>
+      {/* <Table query = {query}/> */}
     </div>
   );
 }
