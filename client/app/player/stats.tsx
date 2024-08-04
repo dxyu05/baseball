@@ -1,25 +1,18 @@
-'use client' // Ensure this is a client-side component
+// components/stats.tsx
 
-import useSWR from 'swr';
-
-export default function Stats(){
-
-    const fetcher = (...args) => fetch(...args).then(res => res.json());
-
-    const name = query.split(' ');
-    console.log(query);
-    const link = `http://localhost:8080/player-stats/?firstName=${encodeURIComponent(name[0])}&lastName=${encodeURIComponent(name[1])}`;
-    console.log(link);
-    const { data, error } = useSWR(link, fetcher);
-
-    if (error) return <div>Failed to load</div>;
-    if (!data) return <div>Loading...</div>;
-
-    return (
-        <div>
-        <h1>Player Data</h1>
-        <pre>{JSON.stringify(data, null, 2)}</pre> {/* Display player data */}
-        </div>
-    );
-
+interface StatsProps {
+  playerStats: any; // Define a specific type for your player stats if possible
+  link: string;
 }
+
+const Stats = ({ playerStats, link }: StatsProps) => {
+  return (
+    <div>
+      <h2>Player Stats</h2>
+      <h3>{link}</h3>
+      <pre>{JSON.stringify(playerStats, null, 2)}</pre> {/* Display player stats */}
+    </div>
+  );
+};
+
+export default Stats;

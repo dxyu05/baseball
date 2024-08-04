@@ -35,7 +35,7 @@ export default function Search({ placeholder }: { placeholder: string }) {
       
       // Redirecting to the new URL
       
-      push(`${pathname}player?/${params.toString()}`);
+      push(`${pathname}player?${params.toString()}`);
     }
   };
 
