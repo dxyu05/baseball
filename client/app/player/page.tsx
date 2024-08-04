@@ -1,3 +1,5 @@
+import Stats from './stats';
+
 export default async function Page({
   searchParams,
 }: {
@@ -39,12 +41,3 @@ export default async function Page({
   );
 }
 
-export function Stats(playerStats) {
-  return (
-    <div>
-      <h2>Player Stats</h2>
-      <h1>link</h1>
-      <pre>{JSON.stringify(playerStats, null, 2)}</pre> {/* Display player stats */}
-    </div>
-  );
-}
