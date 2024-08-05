@@ -31,7 +31,7 @@ export default async function Page({
 
   return (
     <div>
-      <h1>Player Data</h1>
+      <h1>Player Stats</h1>
       {error ? (
         <div>Failed to load data: {error}</div>
       ) : (
