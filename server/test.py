@@ -5,6 +5,7 @@ from pybaseball import  statcast_pitcher
 from pybaseball import statcast_batter
 from pybaseball import batting_stats_range
 import statsapi
+import requests
 
 clayton = playerid_lookup('kershaw', 'clayton')
 shohei = playerid_lookup('ohtani', 'shohei')
@@ -16,3 +17,7 @@ id = statsapi.lookup_player('bryce harper')[0]['id']
 print(statsapi.lookup_player('bryce harper')[0]['id'])
 stats = statsapi.player_stats(id, 'hitting', 'career')
 print(stats) 
+
+response = requests.get('http://localhost:8080/player-stats/?firstName=shohei&lastName=ohtani')
+print(response.json())
+
