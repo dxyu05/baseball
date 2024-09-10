@@ -8,10 +8,10 @@ import statsapi
 import pandas as pd
 import re
 
-app = Flask(__name__)
-CORS(app)
+application = Flask(__name__)
+CORS(application)
 
-@app.route("/player-stats/", methods = ['GET'])
+@application.route("/player-stats/", methods = ['GET'])
 
 def getStats():
     #TODO: basically, need to get playerid, and get career stats by 
@@ -114,4 +114,4 @@ def check_and_escape_quotes(text):
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port = 8080)
+    application.run()
