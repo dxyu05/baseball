@@ -10,7 +10,7 @@ export default async function Page({
 }) {
   const query = searchParams?.query || '';
   const name = query.split(' ');
-  const link = `https://baseball-529l.onrender.com${name[0]}&lastName=${name[1]}`;
+  const link = `https://baseball-529l.onrender.com/player-stats/?firstName=${name[0]}&lastName=${name[1]}`;
   
   try {
     console.log(link)
