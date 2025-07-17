@@ -1,1 +1,1 @@
-Small project that displays players stats. If the search does not work it is most likely because the API is not online (these things ain't free).
+Small project that displays baseball players stats. If the search does not work it is most likely because the API is not online (these things ain't free).
