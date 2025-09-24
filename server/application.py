@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from flask_caching import Cache
 from pybaseball import  playerid_lookup
 from pybaseball import batting_stats_range
 from pybaseball import statcast_batter
@@ -7,12 +8,21 @@ from pybaseball import statcast_pitcher
 import statsapi
 import pandas as pd
 import re
+import os
 
 application = Flask(__name__)
 CORS(application)
 
-@application.route("/player-stats/", methods = ['GET'])
+# Configure Redis cache
+cache = Cache(config={
+    "CACHE_TYPE": "RedisCache",
+    "CACHE_REDIS_URL": os.getenv("REDIS_URL", "redis://127.0.0.1:6379/0"),
+    "CACHE_DEFAULT_TIMEOUT": 3600,  # 1 hour
+})
+cache.init_app(application)
 
+@application.route("/player-stats/", methods = ['GET'])
+@cache.cached(query_string=True)  # Cache based on query parameters (firstName, lastName)
 def getStats():
     #TODO: basically, need to get playerid, and get career stats by 
     #finding their career start year and end year
@@ -107,10 +117,9 @@ def getStats():
 
         response = (jsonify(player_stats))
     
-        # Add no-cache headers
-        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, public, max-age = 0'
-        response.headers['Pragma'] = 'no-cache'
-        response.headers['Expires'] = '0'
+        # Add cache-friendly headers
+        response.headers['Cache-Control'] = 'public, max-age=3600'
+        response.headers['Vary'] = 'Accept-Encoding'
         
 
         return response, 200
