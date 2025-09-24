@@ -37,52 +37,72 @@ def getStats():
     if stats:
         stats = stats.strip()
 
-        
         stats_list = stats.split('\n')
-        
-        '''
-        count = 0
-        for stat in stats_list:
-            print(stat, ' line ', count)
-            count = count + 1
-        '''
-        # Extracting the stats and mapping them to a dictionary
-        #
-        
+
+        # Build a key -> value map from the stats lines (e.g., "avg: .208")
+        line_map = {}
+        for line in stats_list:
+            if ': ' in line:
+                key, value = line.split(': ', 1)
+                line_map[key.strip()] = value.strip()
+
+        def parse_int(value):
+            try:
+                if value is None or value == '' or value == '--':
+                    return 0
+                value = value.replace(',', '')
+                if value.startswith('.'):
+                    value = '0' + value
+                # Some integer-like values might appear as decimals like "12.0"
+                return int(float(value))
+            except Exception:
+                return 0
+
+        def parse_float(value):
+            try:
+                if value is None or value == '' or value == '--':
+                    return 0.0
+                value = value.replace(',', '')
+                if value.startswith('.'):
+                    value = '0' + value
+                return float(value)
+            except Exception:
+                return 0.0
+
         player_stats = {
-            "name": (stats_list[0]),
-            "gamesPlayed": int(stats_list[3].split(': ')[1]),
-            "groundOuts": int(stats_list[4].split(': ')[1]),
-            "airOuts": int(stats_list[5].split(': ')[1]),
-            "runs": int(stats_list[6].split(': ')[1]),
-            "doubles": int(stats_list[7].split(': ')[1]),
-            "triples": int(stats_list[8].split(': ')[1]),
-            "homeRuns": int(stats_list[9].split(': ')[1]),
-            "strikeOuts": int(stats_list[10].split(': ')[1]),
-            "baseOnBalls": int(stats_list[11].split(': ')[1]),
-            "intentionalWalks": int(stats_list[12].split(': ')[1]),
-            "hits": int(stats_list[13].split(': ')[1]),
-            "hitByPitch": int(stats_list[14].split(': ')[1]),
-            "avg": float(stats_list[15].split(': ')[1]),
-            "atBats": int(stats_list[16].split(': ')[1]),
-            "obp": float(stats_list[17].split(': ')[1]),
-            "slg": float(stats_list[18].split(': ')[1]),
-            "ops": float(stats_list[19].split(': ')[1]),
-            "caughtStealing": int(stats_list[20].split(': ')[1]),
-            "stolenBases": int(stats_list[21].split(': ')[1]),
-            "stolenBasePercentage": float(stats_list[22].split(': ')[1]),
-            "groundIntoDoublePlay": int(stats_list[23].split(': ')[1]),
-            "numberOfPitches": int(stats_list[24].split(': ')[1]),
-            "plateAppearances": int(stats_list[25].split(': ')[1]),
-            "totalBases": int(stats_list[26].split(': ')[1]),
-            "rbi": int(stats_list[27].split(': ')[1]),
-            "leftOnBase": int(stats_list[28].split(': ')[1]),
-            "sacBunts": int(stats_list[29].split(': ')[1]),
-            "sacFlies": int(stats_list[30].split(': ')[1]),
-            "babip": float(stats_list[31].split(': ')[1]),
-            "groundOutsToAirouts": float(stats_list[32].split(': ')[1]),
-            "catchersInterference": int(stats_list[33].split(': ')[1]),
-            "atBatsPerHomeRun": float(stats_list[34].split(': ')[1]),
+            "name": stats_list[0] if stats_list else "",
+            "gamesPlayed": parse_int(line_map.get('gamesPlayed')),
+            "groundOuts": parse_int(line_map.get('groundOuts')),
+            "airOuts": parse_int(line_map.get('airOuts')),
+            "runs": parse_int(line_map.get('runs')),
+            "doubles": parse_int(line_map.get('doubles')),
+            "triples": parse_int(line_map.get('triples')),
+            "homeRuns": parse_int(line_map.get('homeRuns')),
+            "strikeOuts": parse_int(line_map.get('strikeOuts')),
+            "baseOnBalls": parse_int(line_map.get('baseOnBalls')),
+            "intentionalWalks": parse_int(line_map.get('intentionalWalks')),
+            "hits": parse_int(line_map.get('hits')),
+            "hitByPitch": parse_int(line_map.get('hitByPitch')),
+            "avg": parse_float(line_map.get('avg')),
+            "atBats": parse_int(line_map.get('atBats')),
+            "obp": parse_float(line_map.get('obp')),
+            "slg": parse_float(line_map.get('slg')),
+            "ops": parse_float(line_map.get('ops')),
+            "caughtStealing": parse_int(line_map.get('caughtStealing')),
+            "stolenBases": parse_int(line_map.get('stolenBases')),
+            "stolenBasePercentage": parse_float(line_map.get('stolenBasePercentage')),
+            "groundIntoDoublePlay": parse_int(line_map.get('groundIntoDoublePlay')),
+            "numberOfPitches": parse_int(line_map.get('numberOfPitches')),
+            "plateAppearances": parse_int(line_map.get('plateAppearances')),
+            "totalBases": parse_int(line_map.get('totalBases')),
+            "rbi": parse_int(line_map.get('rbi')),
+            "leftOnBase": parse_int(line_map.get('leftOnBase')),
+            "sacBunts": parse_int(line_map.get('sacBunts')),
+            "sacFlies": parse_int(line_map.get('sacFlies')),
+            "babip": parse_float(line_map.get('babip')),
+            "groundOutsToAirouts": parse_float(line_map.get('groundOutsToAirouts')),
+            "catchersInterference": parse_int(line_map.get('catchersInterference')),
+            "atBatsPerHomeRun": parse_float(line_map.get('atBatsPerHomeRun')),
         }
 
         response = (jsonify(player_stats))
