@@ -2,3 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  body {
+    background-color: #0f1923;
+    color: #f0f4f8;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+}
