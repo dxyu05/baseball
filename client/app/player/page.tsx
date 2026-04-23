@@ -79,6 +79,7 @@ export default async function Page({
               groundOutsToAirouts: playerStats.groundOutsToAirouts,
               catchersInterference: playerStats.catchersInterference,
               atBatsPerHomeRun: playerStats.atBatsPerHomeRun,
+              ...(playerStats.pitching && { pitching: playerStats.pitching }),
             }}
           />
         </div>

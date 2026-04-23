@@ -13,11 +13,12 @@ import os
 application = Flask(__name__)
 CORS(application)
 
-# Configure Redis cache
+# Use Redis when available (Docker/prod), fall back to in-memory cache locally
+_redis_url = os.getenv("REDIS_URL")
 cache = Cache(config={
-    "CACHE_TYPE": "RedisCache",
-    "CACHE_REDIS_URL": os.getenv("REDIS_URL", "redis://127.0.0.1:6379/0"),
-    "CACHE_DEFAULT_TIMEOUT": 3600,  # 1 hour
+    "CACHE_TYPE": "RedisCache" if _redis_url else "SimpleCache",
+    "CACHE_REDIS_URL": _redis_url or "",
+    "CACHE_DEFAULT_TIMEOUT": 3600,
 })
 cache.init_app(application)
 
@@ -115,12 +116,47 @@ def getStats():
             "atBatsPerHomeRun": parse_float(line_map.get('atBatsPerHomeRun')),
         }
 
+        # Try to fetch pitching stats — include them if the player has any
+        pitching_raw = statsapi.player_stats(id, 'pitching', 'career')
+        if pitching_raw:
+            pitching_raw = pitching_raw.strip()
+            pitching_lines = pitching_raw.split('\n')
+            pitching_map = {}
+            for line in pitching_lines:
+                if ': ' in line:
+                    k, v = line.split(': ', 1)
+                    pitching_map[k.strip()] = v.strip()
+
+            if pitching_map.get('gamesPlayed') and pitching_map['gamesPlayed'] != '0':
+                player_stats['pitching'] = {
+                    "wins": parse_int(pitching_map.get('wins')),
+                    "losses": parse_int(pitching_map.get('losses')),
+                    "era": parse_float(pitching_map.get('era')),
+                    "gamesPlayed": parse_int(pitching_map.get('gamesPlayed')),
+                    "gamesStarted": parse_int(pitching_map.get('gamesStarted')),
+                    "inningsPitched": pitching_map.get('inningsPitched', '0'),
+                    "strikeOuts": parse_int(pitching_map.get('strikeOuts')),
+                    "baseOnBalls": parse_int(pitching_map.get('baseOnBalls')),
+                    "hits": parse_int(pitching_map.get('hits')),
+                    "homeRuns": parse_int(pitching_map.get('homeRuns')),
+                    "whip": parse_float(pitching_map.get('whip')),
+                    "saves": parse_int(pitching_map.get('saves')),
+                    "blownSaves": parse_int(pitching_map.get('blownSaves')),
+                    "completeGames": parse_int(pitching_map.get('completeGames')),
+                    "shutouts": parse_int(pitching_map.get('shutouts')),
+                    "battersFaced": parse_int(pitching_map.get('battersFaced')),
+                    "numberOfPitches": parse_int(pitching_map.get('numberOfPitches')),
+                    "strikeoutsPer9Inn": parse_float(pitching_map.get('strikeoutsPer9Inn')),
+                    "walksPer9Inn": parse_float(pitching_map.get('walksPer9Inn')),
+                    "hitsPer9Inn": parse_float(pitching_map.get('hitsPer9Inn')),
+                }
+
         response = (jsonify(player_stats))
-    
+
         # Add cache-friendly headers
         response.headers['Cache-Control'] = 'public, max-age=3600'
         response.headers['Vary'] = 'Accept-Encoding'
-        
+
 
         return response, 200
     else:

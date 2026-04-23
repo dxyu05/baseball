@@ -1,10 +1,10 @@
-import { playerStats } from './playerStats';
+import { playerStats, pitchingStats } from './playerStats';
 
 type Props = {
   playerStats: playerStats;
 }
 
-const statGroups: { title: string; accent: string; stats: { key: keyof playerStats; label: string }[] }[] = [
+const statGroups: { title: string; accent: string; stats: { key: Exclude<keyof playerStats, 'pitching'>; label: string }[] }[] = [
   {
     title: 'Batting Basics',
     accent: 'border-blue-500',
@@ -75,30 +75,107 @@ const statGroups: { title: string; accent: string; stats: { key: keyof playerSta
   },
 ];
 
+const pitchingGroups: { title: string; accent: string; stats: { key: keyof pitchingStats; label: string }[] }[] = [
+  {
+    title: 'Pitching Record',
+    accent: 'border-orange-500',
+    stats: [
+      { key: 'gamesPlayed', label: 'Games Pitched' },
+      { key: 'gamesStarted', label: 'Games Started' },
+      { key: 'wins', label: 'Wins' },
+      { key: 'losses', label: 'Losses' },
+      { key: 'saves', label: 'Saves' },
+      { key: 'blownSaves', label: 'Blown Saves' },
+      { key: 'completeGames', label: 'Complete Games' },
+      { key: 'shutouts', label: 'Shutouts' },
+    ],
+  },
+  {
+    title: 'Pitching Metrics',
+    accent: 'border-cyan-500',
+    stats: [
+      { key: 'era', label: 'ERA' },
+      { key: 'whip', label: 'WHIP' },
+      { key: 'inningsPitched', label: 'Innings Pitched' },
+      { key: 'battersFaced', label: 'Batters Faced' },
+      { key: 'numberOfPitches', label: 'Pitches Thrown' },
+    ],
+  },
+  {
+    title: 'Pitching Peripherals',
+    accent: 'border-teal-500',
+    stats: [
+      { key: 'strikeOuts', label: 'Strikeouts' },
+      { key: 'baseOnBalls', label: 'Walks' },
+      { key: 'hits', label: 'Hits Allowed' },
+      { key: 'homeRuns', label: 'HR Allowed' },
+      { key: 'strikeoutsPer9Inn', label: 'K/9' },
+      { key: 'walksPer9Inn', label: 'BB/9' },
+      { key: 'hitsPer9Inn', label: 'H/9' },
+    ],
+  },
+];
+
 const Stats = ({ playerStats }: Props) => {
   return (
-    <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-      {statGroups.map((group) => (
-        <div
-          key={group.title}
-          className={`bg-[#1a2535] rounded-xl border-t-4 ${group.accent} p-5 shadow-lg`}
-        >
-          <h2 className="text-white font-semibold text-base mb-4 tracking-wide">{group.title}</h2>
-          <div className="space-y-0">
-            {group.stats.map(({ key, label }) => (
+    <div className="w-full space-y-8">
+      {/* Batting */}
+      <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {statGroups.map((group) => (
+          <div
+            key={group.title}
+            className={`bg-[#1a2535] rounded-xl border-t-4 ${group.accent} p-5 shadow-lg`}
+          >
+            <h2 className="text-white font-semibold text-base mb-4 tracking-wide">{group.title}</h2>
+            <div className="space-y-0">
+              {group.stats.map(({ key, label }) => (
+                <div
+                  key={key}
+                  className="flex justify-between items-center py-2 border-b border-[#243349] last:border-0"
+                >
+                  <span className="text-gray-400 text-sm">{label}</span>
+                  <span className="text-white font-medium tabular-nums">
+                    {playerStats[key] ?? '—'}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Pitching — only rendered for two-way players */}
+      {playerStats.pitching && (
+        <div>
+          <div className="flex items-center gap-3 mb-5 pt-4 border-t border-[#1a2535]">
+            <span className="text-2xl select-none">🥎</span>
+            <h2 className="text-white text-xl font-bold">Pitching</h2>
+          </div>
+          <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {pitchingGroups.map((group) => (
               <div
-                key={key}
-                className="flex justify-between items-center py-2 border-b border-[#243349] last:border-0"
+                key={group.title}
+                className={`bg-[#1a2535] rounded-xl border-t-4 ${group.accent} p-5 shadow-lg`}
               >
-                <span className="text-gray-400 text-sm">{label}</span>
-                <span className="text-white font-medium tabular-nums">
-                  {playerStats[key] ?? '—'}
-                </span>
+                <h2 className="text-white font-semibold text-base mb-4 tracking-wide">{group.title}</h2>
+                <div className="space-y-0">
+                  {group.stats.map(({ key, label }) => (
+                    <div
+                      key={key}
+                      className="flex justify-between items-center py-2 border-b border-[#243349] last:border-0"
+                    >
+                      <span className="text-gray-400 text-sm">{label}</span>
+                      <span className="text-white font-medium tabular-nums">
+                        {playerStats.pitching![key] ?? '—'}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
             ))}
           </div>
         </div>
-      ))}
+      )}
     </div>
   );
 };
